@@ -25,6 +25,7 @@ interface HitScan extends UnitDefinition<"HitScan"> {
 
 	defaults: {
 		origin?: Vector3;
+		target?: BasePart;
 	};
 
 	on_active_event?: (this: ThisFabricUnit<"HitScan">, ...parameters: Parameters<typeof ray_cast>) => void;

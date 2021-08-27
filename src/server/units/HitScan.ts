@@ -11,4 +11,10 @@ export = identity<FabricUnits["HitScan"]>({
 	defaults: {},
 
 	onClientHit: function (this, player, { target }) {},
+
+	effects: [
+		function (this) {
+			this.get("target");
+		},
+	],
 });
