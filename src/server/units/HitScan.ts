@@ -10,7 +10,5 @@ export = identity<FabricUnits["HitScan"]>({
 
 	defaults: {},
 
-	onClientHit: function (this, player, { target }) {
-		this.addLayer("a", { target: target as BasePart });
-	},
+	onClientHit: function (this, player, { target }) {},
 });
