@@ -1,20 +1,35 @@
 import { ThisFabricUnit, UnitDefinition } from "@rbxts/fabric";
 import { Workspace } from "@rbxts/services";
 
+enum Mode {
+	Semi,
+	Auto,
+}
+
+interface ConfigurableSettings {
+	fire_rate: number;
+	recoil: number;
+	max_distance: number;
+	mode: Mode;
+	damage: number;
+}
+
+interface TransmitData {
+	target?: BasePart;
+}
+
 interface HitScan extends UnitDefinition<"HitScan"> {
 	units: {
 		Replicated: object;
 	};
 
-	defaults: {};
+	defaults: {
+		origin?: Vector3;
+	};
 
-	on_active_event: (this: ThisFabricUnit<"HitScan">, ...parameters: Parameters<typeof ray_cast>) => void;
-}
+	on_active_event?: (this: ThisFabricUnit<"HitScan">, ...parameters: Parameters<typeof ray_cast>) => void;
 
-declare global {
-	interface FabricUnits {
-		HitScan: HitScan;
-	}
+	onClientHit?: (this: ThisFabricUnit<"HitScan">, player: Player, transmit_data: TransmitData) => void;
 }
 
 interface ConfigurableSettings {
@@ -38,6 +53,7 @@ function ray_cast(
 		return ray_cast_builder(origin_in_cframe, ray_cast_result?.Instance);
 	};
 }
+
 export = identity<HitScan>({
 	name: "HitScan",
 
@@ -48,8 +64,22 @@ export = identity<HitScan>({
 	defaults: {},
 
 	on_active_event: function (this, ...parameters: Parameters<typeof ray_cast>) {
-		ray_cast(...parameters)((origin, instance) => {
-			this.getUnit("Transmitter")?.sendWithPredictiveLayer({}, "HitScan", {});
+		ray_cast(...parameters)((origin, target_instance) => {
+			this.getUnit("Transmitter")?.sendWithPredictiveLayer({ origin: origin }, "hit", {
+				target: target_instance,
+			});
 		});
 	},
+
+	effects: [
+		function (this) {
+			this.get("origin");
+		},
+	],
 });
+
+declare global {
+	interface FabricUnits {
+		HitScan: HitScan;
+	}
+}
