@@ -33,9 +33,9 @@ interface HitScan extends UnitDefinition<"HitScan"> {
 	onClientHit?: (this: ThisFabricUnit<"HitScan">, player: Player, transmit_data: TransmitData) => void;
 }
 
-interface ConfigurableSettings {
-	max_distance: number;
-}
+//interface ConfigurableSettings {
+//	max_distance: number;
+//}
 
 function ray_cast(
 	filter_list: Array<Instance>,
