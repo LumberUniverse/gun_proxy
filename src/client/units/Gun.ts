@@ -1,5 +1,6 @@
 import { UnitDefinition } from "@rbxts/fabric";
 import { Players } from "@rbxts/services";
+import { Viewmodel } from "./Viewmodel";
 
 interface Gun extends UnitDefinition<"Gun"> {}
 
@@ -22,5 +23,7 @@ export = identity<Gun>({
 		player.GetMouse().Button1Down.Connect(() => {
 			this.getUnit("HitScan")?.on_active_event();
 		});
+
+		Viewmodel(this)
 	},
 });
