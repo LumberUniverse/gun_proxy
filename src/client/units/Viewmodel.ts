@@ -1,4 +1,4 @@
-import { Players, RunService, Workspace } from "@rbxts/services";
+import { Players, ReplicatedStorage, RunService, Workspace } from "@rbxts/services";
 
 export function CreateArm(name: string) {
     var Camera = Workspace.CurrentCamera
@@ -41,6 +41,7 @@ export function CreateArm(name: string) {
 }
 
 export function Viewmodel(gun: any) {
+    var Gun: any = ReplicatedStorage.FindFirstChild("TestViewmodel")?.Clone()
     var Camera = Workspace.CurrentCamera
     var LeftArm = CreateArm("LeftArm")
     var RightArm = CreateArm("RightArm")
@@ -56,6 +57,8 @@ export function Viewmodel(gun: any) {
     RunService.RenderStepped.Connect(() => {
         let Character = LocalPlayer.Character
         let Humanoid = Character?.FindFirstChildOfClass("Humanoid")
+
+        if (!Gun) return
 
         if (Humanoid && Camera && Humanoid.RootPart && Humanoid.MoveDirection.Magnitude <= 0) {
             let now = os.time()
@@ -78,14 +81,14 @@ export function Viewmodel(gun: any) {
             RecoilCollected += recoild_amount
         }
         
-        if (Camera && LeftArm && LeftArm.PrimaryPart && RightArm && RightArm.PrimaryPart) {
-            gun.model.SetPrimaryPartCFrame(Camera.CFrame.mul(Offset))
+        if (Gun && Gun.PrimaryPart && Camera && LeftArm && LeftArm.PrimaryPart && RightArm && RightArm.PrimaryPart) {
+            Gun.SetPrimaryPartCFrame(Camera.CFrame.mul(Offset))
 
-            LeftArm.PrimaryPart.CFrame = (gun.model.PrimaryPart.LeftArmAttach.WorldCFrame as CFrame)
+            LeftArm.PrimaryPart.CFrame = (Gun.PrimaryPart.LeftArmAttach.WorldCFrame as CFrame)
                 ?.mul(CFrame.Angles(0, math.rad(180), 0))
                 ?.mul(new CFrame(LeftArm.PrimaryPart.Size.X, 0, 0))
 
-            RightArm.PrimaryPart.CFrame = (gun.model.PrimaryPart.RightArmAttach.WorldCFrame as CFrame)
+            RightArm.PrimaryPart.CFrame = (Gun.PrimaryPart.RightArmAttach.WorldCFrame as CFrame)
                 ?.mul(CFrame.Angles(0, math.rad(180), 0))
                 ?.mul(new CFrame(RightArm.PrimaryPart.Size.X, 0, 0))
         }
