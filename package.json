@@ -24,6 +24,7 @@
   },
   "dependencies": {
     "@rbxts/fabric": "^1.1.11",
-    "@rbxts/services": "^1.2.0"
+    "@rbxts/services": "^1.2.0",
+    "@rbxts/spring": "^1.0.2"
   }
 }
