@@ -38,7 +38,8 @@ export function Viewmodel(gun: any) {
 
 		if (Humanoid && Camera && Humanoid.RootPart && Humanoid.MoveDirection.Magnitude <= 0) {
 			const now = os.time();
-			const amount = -math.cos(now) / 5;
+			const amount = -(math.cos(now) / 5);
+
 			const recoild_amount =
 				(LastShot &&
 					math.clamp(
@@ -47,6 +48,7 @@ export function Viewmodel(gun: any) {
 						RecoilHeight,
 					)) ||
 				0;
+
 			const Goal = Camera.CFrame.mul(
 				CFrame.Angles(
 					math.rad(((recoild_amount <= 0 && RecoilCollected <= 0 && amount) || 0) + recoild_amount),
