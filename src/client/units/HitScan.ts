@@ -1,18 +1,6 @@
 import { ThisFabricUnit, UnitDefinition } from "@rbxts/fabric";
 import { Workspace } from "@rbxts/services";
-
-enum Mode {
-	Semi,
-	Auto,
-}
-
-interface ConfigurableSettings {
-	fire_rate: number;
-	recoil: number;
-	max_distance: number;
-	mode: Mode;
-	damage: number;
-}
+import { Config } from "shared/Types";
 
 interface TransmitData {
 	target?: BasePart;
@@ -33,15 +21,17 @@ interface HitScan extends UnitDefinition<"HitScan"> {
 	onClientHit?: (this: ThisFabricUnit<"HitScan">, player: Player, transmit_data: TransmitData) => void;
 }
 
-interface ConfigurableSettings {
-	max_distance: number;
+declare global {
+	interface FabricUnits {
+		HitScan: HitScan;
+	}
 }
 
 function ray_cast(
 	filter_list: Array<Instance>,
 	origin_in_cframe: CFrame,
 	end_position: Vector3,
-	configurable_settings: ConfigurableSettings,
+	configurable_settings: Config,
 ) {
 	const ray_cast_parameters = new RaycastParams();
 	ray_cast_parameters.FilterDescendantsInstances = filter_list;
@@ -78,9 +68,3 @@ export = identity<HitScan>({
 		},
 	],
 });
-
-declare global {
-	interface FabricUnits {
-		HitScan: HitScan;
-	}
-}
