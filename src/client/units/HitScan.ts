@@ -21,17 +21,11 @@ interface HitScan extends UnitDefinition<"HitScan"> {
 	onClientHit?: (this: ThisFabricUnit<"HitScan">, player: Player, transmit_data: TransmitData) => void;
 }
 
-<<<<<<< HEAD
 declare global {
 	interface FabricUnits {
 		HitScan: HitScan;
 	}
 }
-=======
-//interface ConfigurableSettings {
-//	max_distance: number;
-//}
->>>>>>> edbcec31410ffb11c762c715e7b2af87a1e1a71e
 
 function ray_cast(
 	filter_list: Array<Instance>,
