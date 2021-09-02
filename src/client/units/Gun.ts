@@ -1,8 +1,6 @@
-import { ThisFabricUnit, UnitDefinition } from "@rbxts/fabric";
-import { match, __ } from "@rbxts/rbxts-pattern";
-import { Players, UserInputService } from "@rbxts/services";
-import { interval } from "@rbxts/yessir";
-import { Config, Mode } from "shared/Types";
+import { UnitDefinition } from "@rbxts/fabric";
+import { Players } from "@rbxts/services";
+import { Viewmodel } from "./Viewmodel";
 
 const player = Players.LocalPlayer;
 const mouse = player.GetMouse();
@@ -86,8 +84,7 @@ export = identity<Gun>({
 			}
 		});
 
-		this.ref.Equipped.Connect(() => (equipped = true));
-		this.ref.Unequipped.Connect(() => (equipped = false));
+		Viewmodel(this)
 	},
 
 	effects: [
