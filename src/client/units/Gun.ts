@@ -1,12 +1,20 @@
 import { UnitDefinition } from "@rbxts/fabric";
-import { Players } from "@rbxts/services";
-import { Viewmodel } from "./Viewmodel";
+import { match } from "@rbxts/rbxts-pattern";
+import { Players, UserInputService } from "@rbxts/services";
+import { interval } from "@rbxts/yessir";
+import { Config, Mode } from "shared/Types";
+import { create_view_model } from "../ViewModel";
 
 const player = Players.LocalPlayer;
 const mouse = player.GetMouse();
 
 interface Gun extends UnitDefinition<"Gun"> {
-	ref?: Tool;
+	ref?: Tool & {
+		Handle: BasePart & {
+			LeftArmAttach: Attachment;
+			RightArmAttach: Attachment;
+		};
+	};
 
 	units: {
 		Cam: {
@@ -50,7 +58,7 @@ export = identity<Gun>({
 	onInitialize: function (this) {
 		if (!this.ref) return;
 
-		let equipped = false;
+		const equipped = false;
 
 		UserInputService.InputBegan.Connect(({ UserInputType }) => {
 			if (UserInputType !== Enum.UserInputType.MouseButton1 && !equipped) return;
@@ -58,12 +66,10 @@ export = identity<Gun>({
 			const character = player.Character;
 			if (character) {
 				const ray_cast = (active_recoil?: number) => {
-					this.getUnit("HitScan")?.on_active_event?.(
-						[character],
-						this.getUnit("Cam")!.ref.CFrame,
-						mouse.Hit.Position,
-						{ ...this.data!, recoil: active_recoil ?? this.defaults!.recoil },
-					);
+					this.getUnit("HitScan")?.hit?.([character], this.getUnit("Cam")!.ref.CFrame, mouse.Hit.Position, {
+						...this.data!,
+						recoil: active_recoil ?? this.defaults!.recoil,
+					});
 				};
 
 				match(this.get("mode"))
@@ -84,7 +90,7 @@ export = identity<Gun>({
 			}
 		});
 
-		Viewmodel(this)
+		create_view_model(this);
 	},
 
 	effects: [

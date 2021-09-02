@@ -1,5 +1,6 @@
 import { ThisFabricUnit, UnitDefinition } from "@rbxts/fabric";
 import { Workspace } from "@rbxts/services";
+import Yessir from "@rbxts/yessir";
 import { Config } from "shared/Types";
 
 interface TransmitData {
@@ -16,7 +17,9 @@ interface HitScan extends UnitDefinition<"HitScan"> {
 		target?: BasePart;
 	};
 
-	on_active_event?: (this: ThisFabricUnit<"HitScan">, ...parameters: Parameters<typeof ray_cast>) => void;
+	hit?: (this: ThisFabricUnit<"HitScan">, ...parameters: Parameters<typeof ray_cast>) => void;
+
+	on_active_event?: Yessir;
 
 	onClientHit?: (this: ThisFabricUnit<"HitScan">, player: Player, transmit_data: TransmitData) => void;
 }
@@ -54,17 +57,15 @@ export = identity<HitScan>({
 
 	defaults: {},
 
-	on_active_event: function (this, ...parameters: Parameters<typeof ray_cast>) {
+	on_active_event: new Yessir(),
+
+	hit: function (this, ...parameters: Parameters<typeof ray_cast>) {
+		this.on_active_event?.fireUnsafe();
+
 		ray_cast(...parameters)((origin, target_instance) => {
 			this.getUnit("Transmitter")?.sendWithPredictiveLayer({ origin: origin }, "hit", {
 				target: target_instance,
 			});
 		});
 	},
-
-	effects: [
-		function (this) {
-			this.get("origin");
-		},
-	],
 });
