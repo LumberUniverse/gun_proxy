@@ -16,8 +16,15 @@ export function CreateArm(name: string) {
 	return actionArm;
 }
 
+interface GunTypeTree extends Model {
+	PrimaryPart: BasePart & {
+		LeftArmAttach: Attachment,
+		RightArmAttach: Attachment
+	}
+}
+
 export function Viewmodel() {
-	const gun: any = ReplicatedStorage.FindFirstChild("TestViewmodel")?.Clone();
+	const gun = ReplicatedStorage.FindFirstChild("TestViewmodel")?.Clone() as GunTypeTree;
 	const camera = Workspace.CurrentCamera;
 	const leftArm = CreateArm("LeftArm");
 	const rightArm = CreateArm("RightArm");
