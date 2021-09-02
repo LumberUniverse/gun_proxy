@@ -3,64 +3,64 @@ import { Players, ReplicatedStorage, RunService, Workspace } from "@rbxts/servic
 export function CreateArm(name: string) {
 	const Camera = Workspace.CurrentCamera;
 
-	const ActionArm = new Instance("Part");
-	ActionArm.Parent = Camera;
-	ActionArm.Name = name;
-	ActionArm.Anchored = true;
-	ActionArm.CanCollide = false;
-	ActionArm.CanTouch = false;
-	ActionArm.Material = Enum.Material.SmoothPlastic;
-	ActionArm.Color = Color3.fromRGB(204, 142, 105);
-	ActionArm.Size = new Vector3(1.85, 0.75, 0.75);
+	const actionArm = new Instance("Part");
+	actionArm.Parent = Camera;
+	actionArm.Name = name;
+	actionArm.Anchored = true;
+	actionArm.CanCollide = false;
+	actionArm.CanTouch = false;
+	actionArm.Material = Enum.Material.SmoothPlastic;
+	actionArm.Color = Color3.fromRGB(204, 142, 105);
+	actionArm.Size = new Vector3(1.85, 0.75, 0.75);
 
-	return ActionArm;
+	return actionArm;
 }
 
-export function Viewmodel(gun: any) {
-	const Gun: any = ReplicatedStorage.FindFirstChild("TestViewmodel")?.Clone();
-	const Camera = Workspace.CurrentCamera;
-	const LeftArm = CreateArm("LeftArm");
-	const RightArm = CreateArm("RightArm");
-	const LocalPlayer = Players.LocalPlayer;
-	const LastShot: any = undefined;
-	let RecoilCollected = 0;
+export function Viewmodel() {
+	const gun: any = ReplicatedStorage.FindFirstChild("TestViewmodel")?.Clone();
+	const camera = Workspace.CurrentCamera;
+	const leftArm = CreateArm("LeftArm");
+	const rightArm = CreateArm("RightArm");
+	const localPlayer = Players.LocalPlayer;
+	const lastShot: any = undefined;
+	let recoilCollected = 0;
 
 	// MOVE TO GUN
-	const RecoilSpeed = 9;
-	const RecoilHeight = 0.7;
-	const Offset = new CFrame(0.5, -1.5, -2);
+	const recoilSpeed = 9;
+	const recoilHeight = 0.7;
+	const offset = new CFrame(0.5, -1.5, -2);
 
 	RunService.RenderStepped.Connect(() => {
-		const Character = LocalPlayer.Character;
+		const Character = localPlayer.Character;
 		const Humanoid = Character?.FindFirstChildOfClass("Humanoid");
 
-		if (!Gun) return;
+		if (!gun) return;
 
-		if (Humanoid && Camera && Humanoid.RootPart && Humanoid.MoveDirection.Magnitude <= 0) {
+		if (Humanoid && camera && Humanoid.RootPart && Humanoid.MoveDirection.Magnitude <= 0) {
 			const now = os.time();
 			const amount = -(math.cos(now) / 5);
 
 			const recoild_amount =
-				(LastShot &&
+				(lastShot &&
 					math.clamp(
-						-RecoilSpeed * (os.clock() - LastShot) + RecoilHeight,
-						-RecoilCollected / RecoilSpeed,
-						RecoilHeight,
+						-recoilSpeed * (os.clock() - lastShot) + recoilHeight,
+						-recoilCollected / recoilSpeed,
+						recoilHeight,
 					)) ||
 				0;
 
-			const Goal = Camera.CFrame.mul(
+			const Goal = camera.CFrame.mul(
 				CFrame.Angles(
-					math.rad(((recoild_amount <= 0 && RecoilCollected <= 0 && amount) || 0) + recoild_amount),
+					math.rad(((recoild_amount <= 0 && recoilCollected <= 0 && amount) || 0) + recoild_amount),
 					0,
 					0,
 				),
 			);
 
-			Camera.CFrame = Camera.CFrame.Lerp(Goal, 0.5);
-			RecoilCollected += recoild_amount;
+			camera.CFrame = camera.CFrame.Lerp(Goal, 0.5);
+			recoilCollected += recoild_amount;
 
-			if (recoild_amount <= 0 && RecoilCollected <= 0) {
+			if (recoild_amount <= 0 && recoilCollected <= 0) {
 				const X = math.cos(now * 9) / 5;
 				const Y = math.abs(math.sin(now * 12)) / 5;
 				const bobble = new Vector3(X, Y, 0).mul(
@@ -68,29 +68,29 @@ export function Viewmodel(gun: any) {
 				);
 				Humanoid.CameraOffset = Humanoid.CameraOffset.Lerp(bobble, 0.25);
 			}
-		} else if (Humanoid && Camera && Humanoid.RootPart) {
+		} else if (Humanoid && camera && Humanoid.RootPart) {
 			const recoild_amount =
-				(LastShot &&
+				(lastShot &&
 					math.clamp(
-						-RecoilSpeed * (os.clock() - LastShot) + RecoilHeight,
-						-RecoilCollected / RecoilSpeed,
-						RecoilHeight,
+						-recoilSpeed * (os.clock() - lastShot) + recoilHeight,
+						-recoilCollected / recoilSpeed,
+						recoilHeight,
 					)) ||
 				0;
-			Camera.CFrame = Camera.CFrame.Lerp(Camera.CFrame.mul(CFrame.Angles(math.rad(recoild_amount), 0, 0)), 0.5);
-			RecoilCollected += recoild_amount;
+			camera.CFrame = camera.CFrame.Lerp(camera.CFrame.mul(CFrame.Angles(math.rad(recoild_amount), 0, 0)), 0.5);
+			recoilCollected += recoild_amount;
 		}
 
-		if (Gun && Gun.PrimaryPart && Camera && LeftArm && RightArm) {
-			Gun.SetPrimaryPartCFrame(Camera.CFrame.mul(Offset));
+		if (gun && gun.PrimaryPart && camera && leftArm && rightArm) {
+			gun.SetPrimaryPartCFrame(camera.CFrame.mul(offset));
 
-			LeftArm.CFrame = (Gun.PrimaryPart.LeftArmAttach.WorldCFrame as CFrame)
+			leftArm.CFrame = (gun.PrimaryPart.LeftArmAttach.WorldCFrame as CFrame)
 				?.mul(CFrame.Angles(0, math.rad(180), 0))
-				?.mul(new CFrame(LeftArm.Size.X, 0, 0));
+				?.mul(new CFrame(leftArm.Size.X, 0, 0));
 
-			RightArm.CFrame = (Gun.PrimaryPart.RightArmAttach.WorldCFrame as CFrame)
+			rightArm.CFrame = (gun.PrimaryPart.RightArmAttach.WorldCFrame as CFrame)
 				?.mul(CFrame.Angles(0, math.rad(180), 0))
-				?.mul(new CFrame(RightArm.Size.X, 0, 0));
+				?.mul(new CFrame(rightArm.Size.X, 0, 0));
 		}
 	});
 }
