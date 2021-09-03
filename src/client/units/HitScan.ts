@@ -65,12 +65,18 @@ export = identity<HitScan>({
 	on_active_event: new Yessir(),
 
 	hit: function (this, ...parameters: Parameters<typeof ray_cast>) {
-		this.on_active_event?.fireUnsafe();
-
-		ray_cast(...parameters)((origin, target_instance) => {
-			this.getUnit("Transmitter")?.sendWithPredictiveLayer({ origin: origin }, "hit", {
-				target: target_instance,
+		ray_cast(...parameters)((origin, target) => {
+			this.getUnit("Transmitter")?.sendWithPredictiveLayer({ origin, target }, "hit", {
+				target,
 			});
 		});
 	},
+
+	effects: [
+		function (this) {
+			if (this.get("origin") && this.get("target")) {
+				this.on_active_event?.fireUnsafe();
+			}
+		},
+	],
 });
