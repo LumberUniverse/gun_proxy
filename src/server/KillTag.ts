@@ -12,7 +12,9 @@ namespace KillTag {
 	}
 
 	export function kill_tags_into_iter(character: Model) {
-		return Iterator.fromItems(...(character.GetAttributes() as Map<string, Context>));
+		return Iterator.fromItems(...(character.GetAttributes() as Map<string, Context>)).filter((a) => {
+			return a[0].find("KillTag@")[0] !== undefined ? true : false;
+		});
 	}
 
 	export function get_sorted_tags(i: Iterator<[string, Context]>) {
