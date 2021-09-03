@@ -3,7 +3,7 @@ import { match } from "@rbxts/rbxts-pattern";
 import { Players, UserInputService } from "@rbxts/services";
 import { interval } from "@rbxts/yessir";
 import { Config, Mode } from "shared/Types";
-import { create_view_model } from "../ViewModel";
+import { create_view_model } from "../../server/create_view_model";
 
 const player = Players.LocalPlayer;
 const mouse = player.GetMouse();
