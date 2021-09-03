@@ -1,5 +1,5 @@
-import { ThisFabricUnit, UnitDefinition } from "@rbxts/fabric";
-import { Workspace } from "@rbxts/services";
+import { Players } from "@rbxts/services";
+import KillTag from "server/KillTag";
 
 export = identity<FabricUnits["HitScan"]>({
 	name: "HitScan",
@@ -10,11 +10,37 @@ export = identity<FabricUnits["HitScan"]>({
 
 	defaults: {},
 
-	onClientHit: function (this, player, { target }) {},
+	onClientHit: function (this, player, { target }) {
+		if (player) {
+			this.addLayer("damage", {
+				target,
+				player,
+			});
+		}
+	},
 
 	effects: [
 		function (this) {
-			this.get("target");
+			const targeted_base_part = this.get("target");
+			const player = this.get("player");
+			const enemy_player_character = targeted_base_part?.Parent as Model;
+
+			if (player && Players.GetPlayerFromCharacter(enemy_player_character)) {
+				const humanoid = enemy_player_character.FindFirstChild("Humanoid") as Humanoid;
+				const damage = this.ref.get("damage");
+				const time_stamp = os.clock();
+
+				humanoid.TakeDamage(damage);
+
+				KillTag.create_kill_tag(
+					{
+						player,
+						time_stamp,
+						damage,
+					},
+					enemy_player_character,
+				);
+			}
 		},
 	],
 });
