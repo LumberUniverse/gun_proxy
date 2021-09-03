@@ -1,4 +1,5 @@
 import { ThisFabricUnit, UnitDefinition } from "@rbxts/fabric";
+import Unit from "@rbxts/fabric/src/FabricLib/Fabric/Unit";
 import { Workspace } from "@rbxts/services";
 import Yessir from "@rbxts/yessir";
 import { Config } from "shared/Types";
@@ -8,6 +9,8 @@ interface TransmitData {
 }
 
 interface HitScan extends UnitDefinition<"HitScan"> {
+	ref?: Unit<"Gun">;
+
 	units: {
 		Replicated: object;
 	};
@@ -15,6 +18,8 @@ interface HitScan extends UnitDefinition<"HitScan"> {
 	defaults: {
 		origin?: Vector3;
 		target?: BasePart;
+
+		player?: Player;
 	};
 
 	hit?: (this: ThisFabricUnit<"HitScan">, ...parameters: Parameters<typeof ray_cast>) => void;
