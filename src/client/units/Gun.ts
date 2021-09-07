@@ -1,9 +1,11 @@
 import { UnitDefinition } from "@rbxts/fabric";
 import { match } from "@rbxts/rbxts-pattern";
-import { Players, UserInputService } from "@rbxts/services";
-import { interval } from "@rbxts/yessir";
+import { Option } from "@rbxts/rust-classes";
+import { Players, RunService, UserInputService } from "@rbxts/services";
+import { interval, noYield } from "@rbxts/yessir";
 import { Config, Mode } from "shared/Types";
-import { create_view_model } from "../../server/create_view_model";
+import { create_view_model } from "../create_view_model";
+import Cam from "./Cam";
 
 const player = Players.LocalPlayer;
 const mouse = player.GetMouse();
@@ -15,6 +17,8 @@ interface Gun extends UnitDefinition<"Gun"> {
 			RightArmAttach: Attachment;
 		};
 	};
+
+	viewmodel?: Model | undefined;
 
 	units: {
 		Cam: {
@@ -56,6 +60,8 @@ export = identity<Gun>({
 	},
 
 	onInitialize: function (this) {
+		let Camera = Cam
+		
 		if (!this.ref) return;
 
 		const equipped = false;
@@ -71,6 +77,8 @@ export = identity<Gun>({
 						recoil: active_recoil ?? this.defaults!.recoil,
 					});
 				};
+
+				Camera.last_shot = Option.some<number>(os.clock());
 
 				match(this.get("mode"))
 					.with(Mode.Auto, () => {
@@ -90,7 +98,12 @@ export = identity<Gun>({
 			}
 		});
 
-		create_view_model(this);
+		this.viewmodel = create_view_model(this);
+		Camera.change_view_model(this.viewmodel);
+
+		RunService.RenderStepped.Connect(() => {
+			Camera.adjust_camera()
+		});
 	},
 
 	effects: [
