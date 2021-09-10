@@ -59,7 +59,7 @@ export = identity<Gun>({
 	onInitialize: function (this) {
 		let Camera = this.getUnit("Cam")
 		
-		if (!this.ref || !Camera) return;
+		if (!this.ref) return;
 
 		const equipped = false;
 
@@ -100,7 +100,6 @@ export = identity<Gun>({
 		Camera.change_view_model(create_view_model(this));
 
 		RunService.RenderStepped.Connect(() => {
-			if (!Camera) return;
 			Camera.adjust_camera()
 		});
 	},
