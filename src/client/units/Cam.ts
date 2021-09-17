@@ -71,7 +71,7 @@ export = identity<Cam>({
 			this.ref = Workspace.CurrentCamera!;
 		});
 
-		this.offset = this.defaults.offset,
+		this.offset = this.defaults.offset;
 
 		this.localPlayer.CharacterAdded.Connect((character) => {
 			this.character = character;

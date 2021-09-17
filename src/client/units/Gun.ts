@@ -19,7 +19,12 @@ interface Gun extends UnitDefinition<"Gun"> {
 
 	units: {
 		Cam: {
+			recoil_speed: number;
+			recoil_height: number;
+			offset: CFrame;
+
 			current_camera_cframe: CFrame;
+			view_model?: Instance;
 			camera_type: Enum.CameraType;
 			right_handed: boolean;
 		};
@@ -40,6 +45,10 @@ export = identity<Gun>({
 
 	units: {
 		Cam: {
+			recoil_speed: 9,
+			recoil_height: 0.7,
+			offset: new CFrame(0.5, -1.5, -2),
+
 			current_camera_cframe: new CFrame(),
 			camera_type: Enum.CameraType.Custom,
 			right_handed: true,
@@ -69,7 +78,7 @@ export = identity<Gun>({
 			const character = player.Character;
 			if (character) {
 				const ray_cast = (active_recoil?: number) => {
-					this.getUnit("HitScan")?.hit?.([character], this.getUnit("Cam")!.ref.CFrame, mouse.Hit.Position, {
+					this.getUnit("HitScan")?.hit?.([character], Camera!.ref.CFrame, mouse.Hit.Position, {
 						...this.data!,
 						recoil: active_recoil ?? this.defaults!.recoil,
 					});
@@ -97,10 +106,10 @@ export = identity<Gun>({
 			}
 		});
 
-		Camera.change_view_model(create_view_model(this));
+		Camera!.change_view_model(create_view_model(this));
 
 		RunService.RenderStepped.Connect(() => {
-			Camera.adjust_camera()
+			Camera!.adjust_camera()
 		});
 	},
 
