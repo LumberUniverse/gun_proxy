@@ -65,6 +65,20 @@ export = identity<Cam>({
 		Workspace.GetPropertyChangedSignal("CurrentCamera").Connect(() => {
 			this.ref = Workspace.CurrentCamera!;
 		});
+
+		this.offset = this.defaults.offset;
+
+		this.localPlayer.CharacterAdded.Connect((character) => {
+			this.character = character;
+			this.humanoid = character?.FindFirstChildOfClass("Humanoid");
+		})
+		
+		this.localPlayer = Players.LocalPlayer;
+		this.character = this.localPlayer.Character;
+		this.humanoid = this.character?.FindFirstChildOfClass("Humanoid");
+
+		this.last_shot = Option.none<number>();
+		this.recoil_collected = 0;
 	},
 
 	change_view_model: function (this, view_model) {
