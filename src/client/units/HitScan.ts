@@ -1,24 +1,16 @@
 import { ThisFabricUnit, UnitDefinition } from "@rbxts/fabric";
+import Unit from "@rbxts/fabric/src/FabricLib/Fabric/Unit";
 import { Workspace } from "@rbxts/services";
-
-enum Mode {
-	Semi,
-	Auto,
-}
-
-interface ConfigurableSettings {
-	fire_rate: number;
-	recoil: number;
-	max_distance: number;
-	mode: Mode;
-	damage: number;
-}
+import Yessir from "@rbxts/yessir";
+import { Config } from "shared/Types";
 
 interface TransmitData {
 	target?: BasePart;
 }
 
 interface HitScan extends UnitDefinition<"HitScan"> {
+	ref?: Unit<"Gun">;
+
 	units: {
 		Replicated: object;
 	};
@@ -26,22 +18,28 @@ interface HitScan extends UnitDefinition<"HitScan"> {
 	defaults: {
 		origin?: Vector3;
 		target?: BasePart;
+
+		player?: Player;
 	};
 
-	on_active_event?: (this: ThisFabricUnit<"HitScan">, ...parameters: Parameters<typeof ray_cast>) => void;
+	hit?: (this: ThisFabricUnit<"HitScan">, ...parameters: Parameters<typeof ray_cast>) => void;
+
+	on_active_event?: Yessir;
 
 	onClientHit?: (this: ThisFabricUnit<"HitScan">, player: Player, transmit_data: TransmitData) => void;
 }
 
-//interface ConfigurableSettings {
-//	max_distance: number;
-//}
+declare global {
+	interface FabricUnits {
+		HitScan: HitScan;
+	}
+}
 
 function ray_cast(
 	filter_list: Array<Instance>,
 	origin_in_cframe: CFrame,
 	end_position: Vector3,
-	configurable_settings: ConfigurableSettings,
+	configurable_settings: Config,
 ) {
 	const ray_cast_parameters = new RaycastParams();
 	ray_cast_parameters.FilterDescendantsInstances = filter_list;
@@ -64,23 +62,21 @@ export = identity<HitScan>({
 
 	defaults: {},
 
-	on_active_event: function (this, ...parameters: Parameters<typeof ray_cast>) {
-		ray_cast(...parameters)((origin, target_instance) => {
-			this.getUnit("Transmitter")?.sendWithPredictiveLayer({ origin: origin }, "hit", {
-				target: target_instance,
+	on_active_event: new Yessir(),
+
+	hit: function (this, ...parameters: Parameters<typeof ray_cast>) {
+		ray_cast(...parameters)((origin, target) => {
+			this.getUnit("Transmitter")?.sendWithPredictiveLayer({ origin, target }, "hit", {
+				target,
 			});
 		});
 	},
 
 	effects: [
 		function (this) {
-			this.get("origin");
+			if (this.get("origin") && this.get("target")) {
+				this.on_active_event?.fireUnsafe();
+			}
 		},
 	],
 });
-
-declare global {
-	interface FabricUnits {
-		HitScan: HitScan;
-	}
-}

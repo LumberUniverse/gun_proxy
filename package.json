@@ -12,6 +12,7 @@
   "license": "ISC",
   "devDependencies": {
     "@rbxts/compiler-types": "^1.2.3-types.0",
+    "@rbxts/spring": "^1.0.2",
     "@rbxts/types": "^1.0.521",
     "@typescript-eslint/eslint-plugin": "^4.29.3",
     "@typescript-eslint/parser": "^4.29.3",
@@ -24,7 +25,10 @@
   },
   "dependencies": {
     "@rbxts/fabric": "^1.1.11",
+    "@rbxts/log": "^0.4.0-alpha.1",
+    "@rbxts/rbxts-pattern": "^1.0.1",
+    "@rbxts/rust-classes": "^0.11.0-beta.1",
     "@rbxts/services": "^1.2.0",
-    "@rbxts/spring": "^1.0.2"
+    "@rbxts/yessir": "^0.0.7"
   }
 }
